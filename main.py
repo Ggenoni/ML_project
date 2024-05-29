@@ -9,6 +9,7 @@ import model as mdl
 from train import train_model
 import utils
 
+
 def main(args):
     torch.manual_seed(1234)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
