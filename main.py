@@ -5,6 +5,7 @@ import sys
 subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'ftfy', 'regex', 'tqdm'])
 subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'git+https://github.com/openai/CLIP.git'])
 
+
 import torch
 import torch.optim as optim
 import torch.nn as nn
