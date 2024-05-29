@@ -1,5 +1,16 @@
 import os
 import torch
+import subprocess
+import sys
+
+
+def install_CLIP(package):
+    try:
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', package])
+        print("CLIP installed successfully!")
+    except subprocess.CalledProcessError as e:
+        print(f"Error occurred while installing CLIP: {e}")
+  
 
 def save_model(model, filename):
     print("Saving models ...")
@@ -30,9 +41,9 @@ def load_model(model, filename):
 
 #pushing commits to github (terms in uppercase must be changed):
 # cd to project folder
-# git add .
-# git commit -m "message"
-# if needed: git remote add origin https://github.com/USER_NAME/REPO_NAME.git
-# git push origin BRANCH_NAME
+# git add . (add files in the staging area)
+# git commit -m "message" (commit changes)
+# if needed: git remote add NAME_REMOTE https://github.com/USER_NAME/REPO_NAME.git
+# git push NAME_REMOTE BRANCH_NAME (or push -f to force changes)
 
 

@@ -1,5 +1,5 @@
 training:
-  num_epochs: 50
+  num_epochs: 15
   save_name: "trained_ResNet50_flowers.pt"
   
 dataset:
@@ -10,9 +10,9 @@ dataset:
   Food: False
 
 model:
-  CLIP: False
+  CLIP: True
   Vgg19: False
-  ResNet50: True
+  ResNet50: False
 
 pretrained:
   pre_t: False
