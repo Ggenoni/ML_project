@@ -1,11 +1,20 @@
+import subprocess
+import sys
+
+# Install required packages
+subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'ftfy', 'regex', 'tqdm'])
+subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'git+https://github.com/openai/CLIP.git'])
+
 import torch
 import torch.optim as optim
 import torch.nn as nn
+from torch.optim.lr_scheduler import StepLR
 import yaml
 import argparse
-from dataset import get_data_loaders
-from model import get_model
-from train import train
+import dataset
+import model as mdl
+from train import train_model
+import utils
 
 def main(args):
     torch.manual_seed(1234)
@@ -23,21 +32,63 @@ def main(args):
         
     batch_size_train = config["data"]["batch_size_train"]
     batch_size_test = config["data"]["batch_size_test"]
+    output_dim = config["data"]["output_dim"]
     num_workers = config["data"]["num_workers"]
     num_epochs = config["training"]["num_epochs"]
+    save_name = config["training"]["save_name"]
+    load_model = config["pretrained"]["pre_t"]
+    pretrained_model = config["pretrained"]["load"]
+    logger = config["logger"]["wandb"]
 
     # Get data loaders
-    train_loader, val_loader = get_data_loaders(batch_size_train, batch_size_test, num_workers)
+    if config["dataset"]["Flowers"]:
+        train_loader, val_loader = dataset.get_data_flowers(batch_size_train, batch_size_test, num_workers)
+    else:
+        print("Cannot find dataset")
+
+    criterion = nn.CrossEntropyLoss()
 
     # Get model
-    model = get_model(output_dim=102)  # 102 classes in Flowers102 dataset
+    if config["model"]["CLIP"]:
+        model = mdl.get_CLIP_model(output_dim=output_dim)  # 102 classes in Flowers102 dataset
 
-    # Set up the loss function and optimizer
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.bottleneck.parameters(), lr=1e-4)
+        if load_model:
+            utils.load_model(model, pretrained_model)
+            print("Pretrained model loaded!")
 
-    # Train the model
-    train(model, train_loader, val_loader, criterion, optimizer, device, num_epochs, logger=config["logger"]["wandb"])
+        # Freeze the CLIP model parameters
+        #for param in model.parameters():
+            #param.requires_grad = False
+
+        # Train the model
+        # Set up the loss function and optimizer
+        optimizer = optim.Adam(model.bottleneck.parameters(), lr=0.001)
+        scheduler = StepLR(optimizer, step_size=7, gamma=0.1)
+        train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, device, num_epochs, logger, save_name)
+
+    elif config["model"]["Vgg19"]:
+        model = mdl.get_Vgg19_model(output_dim=output_dim)
+
+        if load_model:
+            utils.load_model(model, pretrained_model)
+            print("Pretrained model loaded!")
+
+        optimizer = optim.Adam(model.classifier.parameters(), lr=0.001)
+        scheduler = StepLR(optimizer, step_size=7, gamma=0.1)
+        train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, device, num_epochs, logger, save_name)
+
+    elif config["model"]["ResNet50"]:
+        model = mdl.get_ResNet50_model(output_dim=output_dim)
+
+        if load_model:
+            utils.load_model(model, pretrained_model)
+            print("Pretrained model loaded!")
+
+        optimizer = optim.Adam(model.fc.parameters(), lr=0.001, weight_decay=1e-4)
+        scheduler = StepLR(optimizer, step_size=7, gamma=0.1)
+        train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, device, num_epochs, logger, save_name)
+
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("")
@@ -45,3 +96,11 @@ if __name__ == "__main__":
     parser.add_argument("--run_name", required=False, type=str, help="Name of the run")
     args = parser.parse_args()
     main(args)
+
+
+#further improvements:
+# DROP OUT
+# OPTIMIZER
+# LEARNING RATE (scheduler): StepLR decreases the learning rate by gamma every step_size epochs
+# change batch size!
+# function to stop training if model does not improve...

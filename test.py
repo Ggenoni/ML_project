@@ -1,14 +1,15 @@
 import torch
 from tqdm import tqdm
 
-def test(model, val_loader, criterion, device):
+def test_model(model, val_loader, criterion, device):
     model.eval()
+
     running_loss = 0.0
     correct = 0
     total = 0
 
     with torch.no_grad():
-        for batch_idx, (inputs, labels) in tqdm(enumerate(val_loader), total=len(val_loader), desc="Testing"):
+        for _, (inputs, labels) in tqdm(enumerate(val_loader), total=len(val_loader), desc="Testing"):
             inputs, labels = inputs.to(device), labels.to(device)
             outputs = model(inputs)
             loss = criterion(outputs, labels)

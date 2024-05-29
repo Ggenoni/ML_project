@@ -2,13 +2,13 @@ import torch
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
-def get_data_loaders(batch_size_train, batch_size_test, num_workers):
+def get_data_flowers(batch_size_train, batch_size_test, num_workers):
     # Define the data transformations for training
     train_transform = transforms.Compose([
         transforms.RandomResizedCrop(224),
         transforms.RandomHorizontalFlip(),
-        transforms.RandomRotation(15),
-        transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4, hue=0.2),
+        #transforms.RandomRotation(15),
+        #transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4, hue=0.2),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
