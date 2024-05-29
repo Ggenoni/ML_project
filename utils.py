@@ -25,4 +25,14 @@ def load_model(model, filename):
         print("Model file not found!")
 
 
+#use azure machine:
 #scp -r -P 5012 "D:/DATA SCIENCE/MACHINE LEARNING/CLIP_project" disi@lab-b19fb86e-17c2-41af-aa77-c4a6adf27da4.westeurope.cloudapp.azure.com:/home/disi/
+
+#pushing commits to github (terms in uppercase must be changed):
+# cd to project folder
+# git add .
+# git commit -m "message"
+# if needed: git remote add origin https://github.com/USER_NAME/REPO_NAME.git
+# git push origin BRANCH_NAME
+
+
