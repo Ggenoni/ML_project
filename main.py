@@ -32,6 +32,10 @@ def main(args):
     # Get model
     model = get_model(output_dim=102)  # 102 classes in Flowers102 dataset
 
+    # Freeze the CLIP model parameters
+    for param in clip_model.parameters():
+        param.requires_grad = False
+
     # Set up the loss function and optimizer
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.bottleneck.parameters(), lr=1e-4)
