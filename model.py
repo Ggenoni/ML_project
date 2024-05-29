@@ -6,7 +6,7 @@ import torchvision.models as models
 class BottleneckCLIP(nn.Module):
     def __init__(self, output_dim, bias=False):
         super(BottleneckCLIP, self).__init__()
-        model, _ = clip.load("ViT-B/32", device="cuda" if torch.cuda.is_available() else "cpu")
+        model, preprocess = clip.load("ViT-B/32", device="cuda" if torch.cuda.is_available() else "cpu")
         in_features = 512  # Change to match ViT-B/32
         out_features = 1024
 
@@ -24,6 +24,10 @@ class BottleneckCLIP(nn.Module):
             nn.Linear(out_features, output_dim)
         )
 
+        # Assign preprocess object to self
+        self.preprocess = preprocess
+
+
     def forward(self, x):
         with torch.no_grad():
             x = self.encoder(x)
@@ -32,8 +36,11 @@ class BottleneckCLIP(nn.Module):
 
 def get_CLIP_model(output_dim):
     model = BottleneckCLIP(output_dim)
+    # Freeze CLIP weights
+    for param in model.encoder.parameters():
+        param.requires_grad = False
     print("CLIP model ready to go!")
-    return model.to("cuda" if torch.cuda.is_available() else "cpu")
+    return model.to("cuda" if torch.cuda.is_available() else "cpu"), model.preprocess
 
 
 def get_Vgg19_model(output_dim):

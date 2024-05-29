@@ -1,11 +1,3 @@
-import subprocess
-import sys
-
-# Install required packages
-subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'ftfy', 'regex', 'tqdm'])
-subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'git+https://github.com/openai/CLIP.git'])
-
-
 import torch
 import torch.optim as optim
 import torch.nn as nn
@@ -16,6 +8,7 @@ import dataset
 import model as mdl
 from train import train_model
 import utils
+
 
 def main(args):
     torch.manual_seed(1234)
@@ -51,15 +44,20 @@ def main(args):
 
     # Get model
     if config["model"]["CLIP"]:
-        model = mdl.get_CLIP_model(output_dim=output_dim)  # 102 classes in Flowers102 dataset
+
+        # Install required packages
+        utils.install_CLIP('git+https://github.com/openai/CLIP.git')
+        
+        model, preprocess = mdl.get_CLIP_model(output_dim=output_dim)  # 102 classes in Flowers102 dataset
 
         if load_model:
             utils.load_model(model, pretrained_model)
             print("Pretrained model loaded!")
 
-        # Freeze the CLIP model parameters
-        #for param in model.parameters():
-            #param.requires_grad = False
+        if config["dataset"]["Flowers"]:
+            train_loader, val_loader = dataset.get_data_flowers(batch_size_train, batch_size_test, num_workers, transform=preprocess)
+        else:
+            print("Cannot find dataset")
 
         # Train the model
         # Set up the loss function and optimizer
@@ -67,27 +65,33 @@ def main(args):
         scheduler = StepLR(optimizer, step_size=7, gamma=0.1)
         train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, device, num_epochs, logger, save_name)
 
-    elif config["model"]["Vgg19"]:
-        model = mdl.get_Vgg19_model(output_dim=output_dim)
+    else:
+        if config["dataset"]["Flowers"]:
+            train_loader, val_loader = dataset.get_data_flowers(batch_size_train, batch_size_test, num_workers)
+        else:
+            print("Cannot find dataset")
 
-        if load_model:
-            utils.load_model(model, pretrained_model)
-            print("Pretrained model loaded!")
+        if config["model"]["Vgg19"]:
+            model = mdl.get_Vgg19_model(output_dim=output_dim)
 
-        optimizer = optim.Adam(model.classifier.parameters(), lr=0.001)
-        scheduler = StepLR(optimizer, step_size=7, gamma=0.1)
-        train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, device, num_epochs, logger, save_name)
+            if load_model:
+                utils.load_model(model, pretrained_model)
+                print("Pretrained model loaded!")
 
-    elif config["model"]["ResNet50"]:
-        model = mdl.get_ResNet50_model(output_dim=output_dim)
+            optimizer = optim.Adam(model.classifier.parameters(), lr=0.001)
+            scheduler = StepLR(optimizer, step_size=7, gamma=0.1)
+            train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, device, num_epochs, logger, save_name)
 
-        if load_model:
-            utils.load_model(model, pretrained_model)
-            print("Pretrained model loaded!")
+        elif config["model"]["ResNet50"]:
+            model = mdl.get_ResNet50_model(output_dim=output_dim)
 
-        optimizer = optim.Adam(model.fc.parameters(), lr=0.001, weight_decay=1e-4)
-        scheduler = StepLR(optimizer, step_size=7, gamma=0.1)
-        train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, device, num_epochs, logger, save_name)
+            if load_model:
+                utils.load_model(model, pretrained_model)
+                print("Pretrained model loaded!")
+
+            optimizer = optim.Adam(model.fc.parameters(), lr=0.001, weight_decay=1e-4, momentum=0.9)
+            scheduler = StepLR(optimizer, step_size=7, gamma=0.1)
+            train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, device, num_epochs, logger, save_name)
 
 
 
@@ -103,5 +107,6 @@ if __name__ == "__main__":
 # DROP OUT
 # OPTIMIZER
 # LEARNING RATE (scheduler): StepLR decreases the learning rate by gamma every step_size epochs
+# MOMENTUM
 # change batch size!
 # function to stop training if model does not improve...
