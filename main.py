@@ -49,7 +49,7 @@ def main(args):
             utils.load_model(model, pretrained_model, current_model)
             print("Pretrained model loaded!")
 
-        if config["dataset"]["Flowers"]:
+        if config["dataset"]=="Flowers":
             train_loader, val_loader = dataset.get_data_flowers(batch_size_train, batch_size_test, num_workers, transform=preprocess)
         else:
             # ADD HERE OTHER DATA LOADERS
