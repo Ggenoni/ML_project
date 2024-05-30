@@ -46,4 +46,6 @@ def load_model(model, filename):
 # if needed: git remote add NAME_REMOTE https://github.com/USER_NAME/REPO_NAME.git
 # git push NAME_REMOTE BRANCH_NAME (or push -f to force changes)
 
+#check remote: git remote -v
+
 

@@ -1,18 +1,14 @@
 training:
   num_epochs: 15
   save_name: "trained_ResNet50_flowers.pt"
-  
-dataset:
-  Flowers: True
-  Cub: False
-  Dogs: False
-  Airplanes: False
-  Food: False
 
-model:
-  CLIP: True
-  Vgg19: False
-  ResNet50: False
+#dataset names: "Flowers", "Cub", "Dogs", "Airplanes", "Food"
+
+dataset: "Flowers"
+
+#model name: "CLIP", "Vgg19", "ResNet50"
+
+model: "ResNet50"
 
 pretrained:
   pre_t: False
