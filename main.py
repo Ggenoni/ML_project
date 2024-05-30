@@ -39,6 +39,7 @@ def main(args):
     if config["dataset"] == "Flowers":
         train_loader, val_loader = dataset.get_data_flowers(batch_size_train, batch_size_test, num_workers)
     else:
+        # ADD HERE OTHER DATA LOADERS
         print("Cannot find dataset")
 
     criterion = nn.CrossEntropyLoss()
@@ -58,6 +59,7 @@ def main(args):
         if config["dataset"]["Flowers"]:
             train_loader, val_loader = dataset.get_data_flowers(batch_size_train, batch_size_test, num_workers, transform=preprocess)
         else:
+            # ADD HERE OTHER DATA LOADERS
             print("Cannot find dataset")
 
         # Train the model
@@ -70,6 +72,7 @@ def main(args):
         if config["dataset"] == "Flowers":
             train_loader, val_loader = dataset.get_data_flowers(batch_size_train, batch_size_test, num_workers)
         else:
+            # ADD HERE OTHER DATA LOADERS
             print("Cannot find dataset")
 
         if current_model == "Vgg19":
