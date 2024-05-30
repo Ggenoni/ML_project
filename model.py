@@ -60,6 +60,8 @@ def get_Vgg19_model(output_dim):
 
 def get_ResNet50_model(output_dim=102, dropout_p=0.5):
     # Load the pretrained ResNet50 model
+def get_ResNet50_model(output_dim=102, dropout_p=0.5):
+    # Load the pretrained ResNet50 model
     model = models.resnet50(pretrained=True)
 
     # Freeze training for all layers

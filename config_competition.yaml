@@ -1,8 +1,10 @@
 training:
-  num_epochs: 2
-  save_name: "trained_ResNet50_flowers.pt"
+  num_epochs: 15
+  save_name: "trained_competition.pt"
 
 #dataset names: "Flowers", "Cub", "Dogs", "Airplanes", "Food"
+
+competition: "Test"
 
 dataset: "Flowers"
 
@@ -12,7 +14,7 @@ model: "ResNet50"
 
 pretrained:
   pre_t: False
-  load: "trained_flowers.pt"
+  load: "trained_competition.pt"
 
 data:
   batch_size_train: 32

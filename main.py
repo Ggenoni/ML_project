@@ -40,6 +40,7 @@ def main(args):
 
     # Get model
     if current_model == "CLIP":
+    if current_model == "CLIP":
 
         # Install required packages
         utils.install_CLIP('git+https://github.com/openai/CLIP.git')
@@ -48,11 +49,13 @@ def main(args):
 
         if load_model:
             utils.load_model(model, pretrained_model, current_model)
+            utils.load_model(model, pretrained_model, current_model)
             print("Pretrained model loaded!")
 
         if config["dataset"] == "Flowers":
             train_loader, val_loader = dataset.get_data_flowers(batch_size_train, batch_size_test, num_workers, transform=preprocess)
         else:
+            # ADD HERE OTHER DATA LOADERS
             print("Cannot find dataset")
 
         # Train the model
@@ -60,33 +63,43 @@ def main(args):
         optimizer = optim.Adam(model.bottleneck.parameters(), lr=0.001)
         scheduler = StepLR(optimizer, step_size=7, gamma=0.1)
         train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, device, num_epochs, logger, save_name, current_model)
+        train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, device, num_epochs, logger, save_name, current_model)
 
     else:
         if config["dataset"] == "Flowers":
+        if config["dataset"] == "Flowers":
             train_loader, val_loader = dataset.get_data_flowers(batch_size_train, batch_size_test, num_workers)
         else:
+            # ADD HERE OTHER DATA LOADERS
             print("Cannot find dataset")
 
+        if current_model == "Vgg19":
         if current_model == "Vgg19":
             model = mdl.get_Vgg19_model(output_dim=output_dim)
 
             if load_model:
+                utils.load_model(model, pretrained_model, current_model)
                 utils.load_model(model, pretrained_model, current_model)
                 print("Pretrained model loaded!")
 
             optimizer = optim.Adam(model.classifier.parameters(), lr=0.001)
             scheduler = StepLR(optimizer, step_size=7, gamma=0.1)
             train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, device, num_epochs, logger, save_name, current_model)
+            train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, device, num_epochs, logger, save_name, current_model)
 
+        elif current_model == "ResNet50":
         elif current_model == "ResNet50":
             model = mdl.get_ResNet50_model(output_dim=output_dim)
 
             if load_model:
                 utils.load_model(model, pretrained_model, current_model)
+                utils.load_model(model, pretrained_model, current_model)
                 print("Pretrained model loaded!")
 
             optimizer = optim.Adam(model.additional_layers.parameters(), lr=0.001, weight_decay=1e-4)
+            optimizer = optim.Adam(model.additional_layers.parameters(), lr=0.001, weight_decay=1e-4)
             scheduler = StepLR(optimizer, step_size=7, gamma=0.1)
+            train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, device, num_epochs, logger, save_name, current_model)
             train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, device, num_epochs, logger, save_name, current_model)
 
 
