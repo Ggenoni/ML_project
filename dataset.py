@@ -1,6 +1,8 @@
 import torch
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
+from torch.utils.data import Dataset
+
 
 def get_data_flowers(batch_size_train, batch_size_test, num_workers, transform=None):
 
