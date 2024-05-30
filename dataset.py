@@ -34,3 +34,23 @@ def get_data_flowers(batch_size_train, batch_size_test, num_workers, transform=N
     val_loader = DataLoader(val_dataset, batch_size=batch_size_test, shuffle=False, num_workers=num_workers)
 
     return train_loader, val_loader
+
+class CustomImageDataset(Dataset):
+    def __init__(self, labels, images, transform=None, target_transform=None):
+        self.img_labels = labels
+        self.img_paths = images
+        self.transform = transform
+        self.target_transform = target_transform
+
+    def __len__(self):
+        return len(self.img_labels)
+
+    def __getitem__(self, idx):
+        img_path = self.img_paths[idx]
+        image = Image.open(img_path).convert("RGB")
+        label = self.img_labels[idx]
+        if self.transform:
+            image = self.transform(image)
+        if self.target_transform:
+            label = self.target_transform(label)
+        return image, label
