@@ -35,13 +35,6 @@ def main(args):
     logger = config["logger"]["wandb"]
     current_model = config["model"]
 
-    # Get data loaders
-    if config["dataset"] == "Flowers":
-        train_loader, val_loader = dataset.get_data_flowers(batch_size_train, batch_size_test, num_workers)
-    else:
-        # ADD HERE OTHER DATA LOADERS
-        print("Cannot find dataset")
-
     criterion = nn.CrossEntropyLoss()
 
     # Get model
