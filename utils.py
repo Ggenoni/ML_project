@@ -2,6 +2,7 @@ import os
 import torch
 import subprocess
 import sys
+from tqdm import tqdm
 
 
 def install_CLIP(package):
@@ -49,6 +50,22 @@ def load_model(model, filename, current_model):
         print("The model has been successfully loaded!")
     else:
         print("Model file not found!")
+
+
+# predictions on the TEST set
+def return_predictions_dict(model, test_loader, device):
+    model.eval()
+    preds_dict = {}
+
+    with torch.no_grad():
+        for idx, inputs in tqdm(enumerate(test_loader), total=len(test_loader), desc="Making Predictions"):
+            inputs = inputs.to(device)
+            outputs = model(inputs)
+            _, predicted = outputs.max(1)
+            image_id = idx + 1  # Assuming image IDs start from 1
+            preds_dict[image_id] = predicted.item()
+
+    return preds_dict
 
 
 #use azure machine:
