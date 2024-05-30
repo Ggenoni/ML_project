@@ -37,7 +37,12 @@ def load_model(model, filename):
 
 
 #use azure machine:
+#type into powershell terminal:
 #scp -r -P 5012 "D:/DATA SCIENCE/MACHINE LEARNING/CLIP_project" disi@lab-b19fb86e-17c2-41af-aa77-c4a6adf27da4.westeurope.cloudapp.azure.com:/home/disi/
+#then copy azure code into ssh terminal
+#cd to project folder
+#run: python main-py --config config_flowers102.yaml --run_name my_run
+
 
 #pushing commits to github (terms in uppercase must be changed):
 # cd to project folder

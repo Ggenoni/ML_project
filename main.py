@@ -35,7 +35,7 @@ def main(args):
     logger = config["logger"]["wandb"]
 
     # Get data loaders
-    if config["dataset"]["Flowers"]:
+    if config["dataset"] == "Flowers":
         train_loader, val_loader = dataset.get_data_flowers(batch_size_train, batch_size_test, num_workers)
     else:
         print("Cannot find dataset")
@@ -43,7 +43,7 @@ def main(args):
     criterion = nn.CrossEntropyLoss()
 
     # Get model
-    if config["model"]["CLIP"]:
+    if config["model"] == "CLIP":
 
         # Install required packages
         utils.install_CLIP('git+https://github.com/openai/CLIP.git')
@@ -66,12 +66,12 @@ def main(args):
         train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, device, num_epochs, logger, save_name)
 
     else:
-        if config["dataset"]["Flowers"]:
+        if config["dataset"] == "Flowers":
             train_loader, val_loader = dataset.get_data_flowers(batch_size_train, batch_size_test, num_workers)
         else:
             print("Cannot find dataset")
 
-        if config["model"]["Vgg19"]:
+        if config["model"] == "Vgg19":
             model = mdl.get_Vgg19_model(output_dim=output_dim)
 
             if load_model:
@@ -82,7 +82,7 @@ def main(args):
             scheduler = StepLR(optimizer, step_size=7, gamma=0.1)
             train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, device, num_epochs, logger, save_name)
 
-        elif config["model"]["ResNet50"]:
+        elif config["model"] == "ResNet50":
             model = mdl.get_ResNet50_model(output_dim=output_dim)
 
             if load_model:
