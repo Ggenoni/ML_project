@@ -4,7 +4,7 @@ from test import test_model
 from utils import save_model
 
 
-def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, device, num_epochs, logger, filename):
+def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, device, num_epochs, logger, filename, current_model):
 
     best_accuracy = 0
 
@@ -38,7 +38,7 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler
         # Save model if validation accuracy is the best so far
         if val_accuracy > best_accuracy:
             best_accuracy = val_accuracy
-            save_model(model, filename)
+            save_model(model, filename, current_model)
 
         # Log the metrics to wandb if logger is enabled
         if logger:
