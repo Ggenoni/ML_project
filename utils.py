@@ -12,22 +12,37 @@ def install_CLIP(package):
         print(f"Error occurred while installing CLIP: {e}")
   
 
-def save_model(model, filename):
+def save_model(model, filename, current_model):
     print("Saving models ...")
     save_folder = "trained_model"
+    
     if not os.path.exists(save_folder):
         os.makedirs(save_folder)
+    
+    save_folder_model = os.path.join(save_folder, current_model)
+    if not os.path.exists(save_folder_model):
+        os.makedirs(save_folder_model)
 
-    save_path = os.path.join(save_folder, filename)
+    save_path = os.path.join(save_folder_model, filename)
     torch.save(model.state_dict(), save_path)
     print("The model has been successfully saved!")
 
 
 
-def load_model(model, filename):
+def load_model(model, filename, current_model):
     print("Loading model ...")
+
     save_folder = "trained_model"
-    save_path = os.path.join(save_folder, filename)
+    
+    if not os.path.exists(save_folder):
+        os.makedirs(save_folder)
+    
+    save_folder_model = os.path.join(save_folder, current_model)
+    if not os.path.exists(save_folder_model):
+        os.makedirs(save_folder_model)
+
+    save_path = os.path.join(save_folder_model, filename)
+   
     if os.path.exists(save_path):
         model.load_state_dict(torch.load(save_path))
         model.eval()  # Mettere il modello in modalità valutazione
