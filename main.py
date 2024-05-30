@@ -89,7 +89,7 @@ def main(args):
                 utils.load_model(model, pretrained_model)
                 print("Pretrained model loaded!")
 
-            optimizer = optim.Adam(model.fc.parameters(), lr=0.001, weight_decay=1e-4, momentum=0.9)
+            optimizer = optim.Adam(model.additional_layers.parameters(), lr=0.001, weight_decay=1e-4)
             scheduler = StepLR(optimizer, step_size=7, gamma=0.1)
             train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, device, num_epochs, logger, save_name)
 

@@ -58,19 +58,41 @@ def get_Vgg19_model(output_dim):
     return model.to("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def get_ResNet50_model(output_dim, dropout_p=0.5):
+def get_ResNet50_model(output_dim=102, dropout_p=0.5):
+    # Load the pretrained ResNet50 model
     model = models.resnet50(pretrained=True)
 
     # Freeze training for all layers
     for param in model.parameters():
         param.requires_grad = False
 
-    # Modify the fully connected layer
-    num_features = model.fc.in_features
-    model.fc = nn.Sequential(
-        nn.Dropout(p=dropout_p),
-        nn.Linear(num_features, output_dim)
-    )
-    
-    print("ResNet50 model ready to go!")
-    return model.to("cuda" if torch.cuda.is_available() else "cpu")
+    # Define a new head for the ResNet50 model
+    class CustomResNet50(nn.Module):
+        def __init__(self, base_model, output_dim, dropout_p):
+            super(CustomResNet50, self).__init__()
+            self.base_model = base_model
+            self.base_model.fc = nn.Identity()  # Remove the original fully connected layer
+            self.additional_layers = nn.Sequential(
+                nn.Conv2d(2048, 1024, kernel_size=1),  # Additional conv layer
+                nn.BatchNorm2d(1024),
+                nn.ReLU(inplace=True),
+                nn.AdaptiveAvgPool2d((1, 1)),  # Ensure the same output size
+                nn.Flatten(),
+                nn.Linear(1024, 512),
+                nn.ReLU(inplace=True),
+                nn.Dropout(p=dropout_p),
+                nn.Linear(512, output_dim)
+            )
+
+        def forward(self, x):
+            x = self.base_model(x)
+            x = x.view(x.size(0), 2048, 1, 1)  # Reshape the tensor to [batch_size, 2048, 1, 1]
+            x = self.additional_layers(x)
+            return x
+
+    # Create an instance of the custom model
+    custom_model = CustomResNet50(model, output_dim, dropout_p)
+
+    print("Custom ResNet50 model ready to go!")
+    return custom_model.to("cuda" if torch.cuda.is_available() else "cpu")
+

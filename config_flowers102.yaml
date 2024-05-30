@@ -8,7 +8,7 @@ dataset: "Flowers"
 
 #model name: "CLIP", "Vgg19", "ResNet50"
 
-model: "Clip"
+model: "ResNet50"
 
 pretrained:
   pre_t: False
